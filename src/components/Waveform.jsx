@@ -1,10 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
-import AudioFile from "../../assets/audio/file_example.mp3";
-import { Play, Pause } from "@phosphor-icons/react";
-import Wavesurfer from "wavesurfer.js";
+import React from "react";
+import { useEffect } from "react";
+import { useState } from "react";
+import { useRef } from "react";
+import WaveSurfer from "wavesurfer.js";
+import { Pause, Play } from "@phosphor-icons/react";
 
 export default function Waveform(props) {
-  const { incoming } = props;
+  const { incoming, audioUrl } = props;
   const waveformRef = useRef(null);
   const [wavesurfer, setWavesurfer] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -13,11 +15,11 @@ export default function Waveform(props) {
 
   useEffect(() => {
     if (waveformRef.current) {
-      const ws = Wavesurfer.create({
+      const ws = WaveSurfer.create({
         container: waveformRef.current,
         waveColor: "#3C50E0",
-        progressColor: "80CAEE",
-        url: AudioFile,
+        progressColor: "#80CAEE",
+        url: audioUrl,
         renderFunction: (channels, ctx) => {
           const { width, height } = ctx.canvas;
           const scale = channels[0].length / width;
@@ -48,7 +50,7 @@ export default function Waveform(props) {
 
           ctx.stroke();
           ctx.closePath();
-        }
+        },
       });
 
       ws.on("ready", () => {
@@ -57,8 +59,8 @@ export default function Waveform(props) {
       });
 
       ws.on("audioprocess", () => {
-        const current = ws.getCurrentTime(); // Fix for current time
-        setCurrentTime(formatTime(current));
+        const currentTime = ws.getCurrentTime();
+        setCurrentTime(formatTime(currentTime));
       });
 
       ws.on("finish", () => {
@@ -77,6 +79,7 @@ export default function Waveform(props) {
   const formatTime = (time) => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
+
     return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
 
@@ -87,18 +90,36 @@ export default function Waveform(props) {
       } else {
         wavesurfer.play();
       }
-      setIsPlaying(!isPlaying); // Toggle the isPlaying state
+      setIsPlaying(!isPlaying);
     }
   };
 
   return (
-    <div className={`flex flex-row items-center space-x-6 p-2 rounded-md ${!incoming ? "bg-transparent" : "bg-gray dark:bg-boxdark"}`}>
-      <button onClick={handlePlayPause} className="bg-gray dark:bg-boxdark-2 rounded-full h-18 w-18 flex items-center justify-center shadow-2">
-        {isPlaying ? <Pause size={24} weight="bold" /> : <Play size={24} weight="bold" />}
+    <div
+      className={`flex flex-row items-center space-x-6 p-2 rounded-md ${
+        'bg-transparent'
+      }`}
+    >
+      <button
+        onClick={handlePlayPause}
+        className="bg-gray dark:bg-boxdark-2 rounded-full h-18 w-18 flex items-center justify-center shadow-2"
+      >
+        {isPlaying ? (
+          <Pause size={24} weight="bold" />
+        ) : (
+          <Play size={24} weight="bold" />
+        )}
       </button>
+
       <div className="grow flex flex-col space-y-1">
-        <div className="w-full !z-0" ref={waveformRef} style={{ overflow: "hidden" }}></div>
-        <div className="text-sm">{currentTime}/{duration}</div>
+        <div
+          className="w-full !z-0"
+          ref={waveformRef}
+          style={{ overflow: "hidden" }}
+        ></div>
+        <div className="text-sm">
+          {currentTime} / {duration}
+        </div>
       </div>
     </div>
   );

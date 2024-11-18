@@ -18,7 +18,9 @@
     "@microlink/react": "^5.5.22",
     "@phosphor-icons/react": "^2.1.7",
     "@reduxjs/toolkit": "^2.3.0",
+    "@supabase/supabase-js": "^2.46.1",
     "axios": "^1.7.7",
+    "date-fns": "^4.1.0",
     "dropzone": "*",
     "emoji-mart": "^5.6.0",
     "lodash": "^4.17.21",
@@ -30,7 +32,9 @@
     "react-router-dom": "^6.27.0",
     "react-toastify": "^10.0.6",
     "redux-persist": "^6.0.0",
+    "socket.io-client": "^4.8.1",
     "wavesurfer.js": "^7.8.8",
+    "yet-another-react-lightbox": "^3.21.6",
     "yup": "^1.4.0"
   },
   "devDependencies": {
